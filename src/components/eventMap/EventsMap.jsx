@@ -564,7 +564,7 @@ const GeoMap = memo(
       setMarkerEvents(groupEvents);
       setShowList(true);
     };
-
+    console.log("Events", events);
     useEventsMarkers({
       events,
       mapRef,

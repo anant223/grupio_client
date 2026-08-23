@@ -7,7 +7,7 @@ import { toast } from "sonner";
 
 
 
-const HeroSection = ({ onJoinWaitlist }) => {
+const HeroSection = () => {
   const {loading, error: typeError, joinWaitlist} = useWaitlist()
   const [submitted, setSubmitted] = useState(false);
 

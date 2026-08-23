@@ -2,15 +2,11 @@ import HeroSection   from "./HeroSection";
 import FeaturesSection from "./FeaturesSection";
 import StorySection  from "./StorySection";
 
-const LandingPage = ({
-  onJoinWaitlist,
-  founderName   = "Anant",
-  founderAvatar = null,
-}) => (
+const LandingPage = () => (
   <>
-    <HeroSection onJoinWaitlist={onJoinWaitlist} />
+    <HeroSection/>
     <FeaturesSection />
-    <StorySection name={founderName} avatar={founderAvatar} />
+    <StorySection name={"Anant"} avatar={null} />
   </>
 );
 

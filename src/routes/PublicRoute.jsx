@@ -3,9 +3,8 @@ import useAuth from "@/hooks/useAuth";
 import { Navigate, } from "react-router-dom";
 
 const PublicRoute = ({ children }) => {
-  const { loading, isAuthenticated, user } = useAuth();
+  const {isAuthenticated, user } = useAuth();
 
-  if (loading) return <CenteredSpinner />;
 
   if (isAuthenticated) {
     return (
