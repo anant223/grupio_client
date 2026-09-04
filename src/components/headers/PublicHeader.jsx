@@ -15,7 +15,6 @@ const PublicHeader = () => {
             <Logo/>
           </Link>
 
-          {/* CTA */}
           <button
             onClick={() => navigate("/auth?type=login")}
             className="text-[13px] font-medium text-[#1a1814] bg-transparent border border-black/15 rounded-full px-4 py-1.5 cursor-pointer hover:bg-black/[0.06] hover:border-black/25 transition-all"

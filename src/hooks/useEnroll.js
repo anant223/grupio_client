@@ -30,7 +30,6 @@ export const useEnroll = (eventId) => {
   }, [dispatch]);
 
   const toggleRegistration = useCallback((eventId) => {
-    console.log("hello")
     return dispatch(toggleEventRegistration(eventId)).unwrap();
   }, [dispatch]);
 

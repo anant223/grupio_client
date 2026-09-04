@@ -7,6 +7,7 @@ import useNotifications from "@/hooks/useNotifications";
 import { transformNotification } from "@/utils/constant";
 import { useMemo } from "react";
 import Logo from "@/components/Logo"
+import { BodyContainer, WrapperContainer } from "../containers/Container";
 
 // ─── Bell ────────────────────────────────────────────────────────────────────
 const NotificationBell = () => {
@@ -441,58 +442,61 @@ export default function AuthenticatedHeader() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-
    return (
-     <div>
+     <>
        <motion.header
          key="split"
          initial={{ opacity: 0, y: -8 }}
          animate={{ opacity: 1, y: 0 }}
          transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
-         className="relative flex-shrink-0  top-0 z-50 bg-[#f0ede6]/90 backdrop-blur-sm border-b border-black/[0.06] h-12"
+         className="relative flex-shrink-0 top-0 z-50 bg-[#f0ede6]/90 backdrop-blur-sm border-b border-black/[0.06] h-14 sm:h-[60px]"
+         style={{ paddingTop: "env(safe-area-inset-top)" }}
        >
-         <div>
-           <div className="flex items-center justify-between px-5 h-[60px]">
-             {/* Logo */}
+         <div className=" container mx-auto h-full px-2 sm:px-4">
+           <div className="flex items-center justify-between h-full">
              <Link
                to="/main/all-events"
-               className="flex items-center gap-2 no-underline"
+               aria-label="Grupio home"
+               className="flex items-center gap-2 no-underline shrink-0 rounded-md focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#E24B4A]"
              >
-               <Logo />
+               <Logo className="h-6 sm:h-7 w-auto" />
              </Link>
 
              {/* Controls */}
-             <div className="flex items-center gap-3">
-               {/* <div aria-disabled className="hidden md:block">
-                <NotificationBell />
-              </div> */}
+             <div className="flex items-center gap-1.5 sm:gap-3">
                <div className="hidden md:block">
                  <UserMenu user={user} />
                </div>
+
                <motion.button
                  whileHover={{ scale: 1.04 }}
                  whileTap={{ scale: 0.96 }}
                  onClick={() => navigate("/main/create-form")}
-                 className="hidden md:flex items-center justify-center w-[38px] h-[38px] rounded-full bg-[#E24B4A] hover:bg-[#d03f3e] transition-colors cursor-pointer flex-shrink-0"
+                 aria-label="Create event"
+                 className="hidden md:flex items-center justify-center w-[38px] h-[38px] rounded-full bg-[#E24B4A] hover:bg-[#d03f3e] active:bg-[#b8352f] transition-colors cursor-pointer flex-shrink-0 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#E24B4A]"
                >
                  <Plus size={15} className="text-white" strokeWidth={2.5} />
                </motion.button>
-               <button
-                 className="md:hidden flex items-center justify-center w-9 h-9 rounded-full bg-gray-100 border border-black/10 cursor-pointer"
+
+               <motion.button
+                 type="button"
+                 whileTap={{ scale: 0.94 }}
+                 aria-label="Open menu"
+                 aria-expanded={mobileOpen}
+                 className="md:hidden flex items-center justify-center w-9 h-9 rounded-full bg-gray-100 hover:bg-gray-200 active:bg-gray-300 border border-black/10 transition-colors cursor-pointer flex-shrink-0"
                  onClick={() => setMobileOpen(true)}
                >
                  <Menu size={15} className="text-[#3d3a34]" />
-               </button>
+               </motion.button>
              </div>
            </div>
          </div>
        </motion.header>
-
        <MobileMenu
          open={mobileOpen}
          onClose={() => setMobileOpen(false)}
          user={user}
        />
-     </div>
+     </>
    );
 }

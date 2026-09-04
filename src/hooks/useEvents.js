@@ -66,7 +66,9 @@ const useEvents = () => {
        return dispatch(fetchEventById(id)).unwrap();
      }, [dispatch]);
     const update = useCallback(({data, id}) => {
-        return dispatch(updateEvent({eventId: id, data})).unwrap()
+        console.log("id", id)
+        console.log("data", data)
+        return dispatch(updateEvent({eventId: id, data: buildEventFormData(data)})).unwrap()
     },[dispatch])
     const delEvent = useCallback((id) => {
       return dispatch(deleteEvent(id)).unwrap();

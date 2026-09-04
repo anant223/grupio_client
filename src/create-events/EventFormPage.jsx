@@ -22,6 +22,7 @@ import useEvents from "@/hooks/useEvents";
 import { toast } from "sonner";
 import usePayment from "@/hooks/usePayment";
 import useLocationSearch from "@/hooks/useLocation";
+import { clearRegisteredEvents } from "@/app/slices/registerSlice";
 
 const CATEGORIES = [
   "tech",
@@ -185,33 +186,9 @@ const ImageUpload = ({ value, onChange }) => {
 
 const LocationInput = ({ value, onChange }) => {
   const [query, setQuery] = useState(value?.address ?? "");
-  // const [results, setResults] = useState([]);
-  // const [loading, setLoading] = useState(false);
   const [open, setOpen] = useState(false);
   const {recommendations, isLoading, err} = useLocationSearch({locationQuery: query})
 
-  // let debounceTimer = null;
-
-  // const search = async (q) => {
-  //   if (!q || q.length < 2) {
-  //     setResults([]);
-  //     return;
-  //   }
-  //   setLoading(true);
-
-  //   try {
-  //     const token = import.meta.env.VITE_MAPBOX_TOKEN;
-  //     const res = await fetch(
-  //       `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(q.trim())}.json?access_token=${token}&limit=5`
-  //     );
-  //     const data = await res.json();
-  //     setResults(data.features ?? []);
-  //   } catch {
-  //     setResults([]);
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // };
   useEffect(() => {
     setQuery(value?.address)
   }, [value?.address])
@@ -222,23 +199,23 @@ const LocationInput = ({ value, onChange }) => {
   };
 
  const select = (f) => {
-  // console.log(f)
-    const [lng, lat] = f.geometry.coordinates;
+    const coordinates = f.geometry.coordinates;
+    console.log(coordinates)
+    
 
     const getContext = (prefix) =>
       f.context?.find((c) => c.id.startsWith(prefix));
       onChange({
+        coordinates,
         address: f.place_name,
-        lat,
-        lng,
         placeId: f.id,
         city: getContext("place")?.text ?? null,
         state: getContext("region")?.text ?? null,
         country: getContext("country")?.text ?? null,
         countryCode: getContext("country")?.short_code?.toUpperCase() ?? null,
-        postalCode: getContext("postcode")?.text ?? null,
+        postalCode: f.place_type?.includes("postcode") ? f.text : (getContext("postcode")?.text ?? null),
       });
-
+      
     setQuery(f.place_name);
     setOpen(false);
 };
@@ -540,11 +517,13 @@ const EventFormPage = () => {
   const eventType = watch("eventType");
   const ticketType = watch("ticketType");
   const desc = watch("desc");
+
   const onSubmit = async (data) => {
     try {
       let res;
       if(event?._id){
         res = await update({data, id: event._id})
+        console.log(res)
       }else {
         data["status"] = "draft";
         res = await create(data);
@@ -760,12 +739,13 @@ const EventFormPage = () => {
                       !!value?.address ||
                       "Venue location is required",
                   }}
-                  render={({ field }) => (
-                    <LocationInput
+                  render={({ field }) => {
+                    console.log(field)
+                    return <LocationInput
                       value={field.value}
                       onChange={field.onChange}
                     />
-                  )}
+                   }}
                 />
                 <FieldError message={errors.location?.message} />
               </div>

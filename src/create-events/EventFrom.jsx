@@ -962,4 +962,3 @@ export default ComposerContent = ({ onClose, onSuccess, user }) => {
   );
 };
 
-

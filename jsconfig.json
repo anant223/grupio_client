@@ -6,5 +6,5 @@
     },
     "ignoreDeprecations": "6.0"
   },
-  "include": ["src", "public/web-assets"]
+  "include": ["src", "public"]
 }

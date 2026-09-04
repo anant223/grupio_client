@@ -16,6 +16,7 @@ import useEvents  from "@/hooks/useEvents";
 import CenteredSpinner from "@/components/common/LoadingSpinner";
 import ResponsiveModal from "@/components/my-ui/Sheet";
 import { toast } from "sonner";
+import useEnroll from "@/hooks/useEnroll";
 
 // ─── Helpers ───────────────────────────────────────────────────────────────────
 function formatDate(dt) {
@@ -100,7 +101,7 @@ function Spinner() {
   );
 }
 
-// ─── Registration / CTA card ───────────────────────────────────────────────────
+
 function CTACard({
   event,
   isOrganizer,
@@ -108,18 +109,20 @@ function CTACard({
   onCancel,
   onEdit,
   onCoHost,
+  onRegister,
+  isRegistered,
   publishing,
   cancelling,
+  registering,
 }) {
   const isDraft = event.status === "draft";
   const isActive = event.status === "active";
   const isCancelled = event.status === "cancelled";
   const isCompleted = event.status === "completed";
   const isPaid = event.ticketType === "paid";
+  const isFull = event.availableTickets === 0;
 
 
-  // button - orgnizer - cancel or active button and for others join button
-  
   return (
     <div className="bg-white rounded-[16px] border border-black/[0.08] overflow-hidden">
       {/* card header */}
@@ -204,39 +207,61 @@ function CTACard({
         {!isOrganizer && (
           <>
             {isActive && (
-              <button
-                type="button"
-                className="w-full h-11 rounded-xl bg-[#1a1814] text-white text-[13.5px] font-bold hover:bg-[#272420] active:scale-[0.99] transition-all"
-              >
-                {isPaid
-                  ? `Buy ticket · ${event.currency} ${event.price}`
-                  : event.requireApproval
-                    ? "Request to join"
-                    : "Join event"}
-              </button>
-            )}
-            {(isCancelled || isCompleted) && (
-              <div className="flex items-center gap-2.5 p-3 bg-[#faf9f7] rounded-[10px]">
-                <p className="text-[13px] text-[#9a9590]">
-                  {isCancelled
-                    ? "This event has been cancelled."
-                    : "This event has already ended."}
-                </p>
-              </div>
+              <>
+                <button
+                  type="button"
+                  onClick={onRegister}
+                  disabled={registering || isFull || isRegistered}
+                  className="..."
+                >
+                  {registering ? (
+                    <>
+                      <Spinner /> Processing…
+                    </>
+                  ) : isFull ? (
+                    "Event full"
+                  ) : isRegistered ? (
+                    "Already registered"
+                  ) : isPaid ? (
+                    `Buy ticket · ${event.currency} ${event.price}`
+                  ) : event.requireApproval ? (
+                    "Request to join"
+                  ) : (
+                    "Join event"
+                  )}
+                </button>
+                <button
+                  type="button"
+                  onClick={onRegister}
+                  // disabled={registering || isFull || isRegistered}
+                  className="w-full h-11 rounded-xl bg-[#1a1814] text-white text-[13.5px] font-bold hover:bg-[#272420] active:scale-[0.99] transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                >
+                  {registering ? (
+                    <>
+                      <Spinner /> Processing…
+                    </>
+                  ) : isFull ? (
+                    "Event full"
+                  ) : isRegistered ? (
+                    "Already registered"
+                  ) : isPaid ? (
+                    `Buy ticket · ${event.currency} ${event.price}`
+                  ) : event.requireApproval ? (
+                    "Request to join"
+                  ) : (
+                    "Join event"
+                  )}
+                </button>
+
+                {/* ✅ Optional: Show ticket availability */}
+                {isPaid && event.availableTickets !== undefined && (
+                  <p className="text-[12px] text-[#9a9590] text-center">
+                    {event.availableTickets} tickets left
+                  </p>
+                )}
+              </>
             )}
           </>
-        )}
-        {!isOrganizer && isActive && (
-          <button
-            type="button"
-            className="w-full h-11 rounded-xl bg-[#1a1814] text-white text-[13.5px] font-bold hover:bg-[#272420] active:scale-[0.99] transition-all"
-          >
-            {isPaid
-              ? `Buy ticket · ${event.currency} ${event.price}`
-              : event.requireApproval
-                ? "Request to join"
-                : "Join event"}
-          </button>
         )}
       </div>
     </div>
@@ -298,6 +323,7 @@ function CoHostModal({ open, onOpenChange, eventId, onAdded }) {
 export default function EventReadPage({eventId}) {
   const navigate = useNavigate();
   const { user } = useAuth();
+  const { isRegistered, isToggling, toggleRegistration } = useEnroll(eventId);
   const { getEventById, currentEvent, cancel, publishEvent, loading, createLoading: publishing, statusLoading } = useEvents();
   const [coHostOpen, setCoHostOpen] = useState(false);
 
@@ -332,6 +358,31 @@ export default function EventReadPage({eventId}) {
     if (navigator.share)
       navigator.share({ title: event?.title, url: window.location.href });
     else navigator.clipboard.writeText(window.location.href);
+  };
+  const handleRegister = async () => {
+    if (!eventId || isToggling) return;
+
+    if (event.availableTickets === 0) {
+      toast.error("All seats are sold");
+      return;
+    }
+
+    try {
+      await toggleRegistration(eventId);
+
+      if (isRegistered) {
+        toast.success("You've been unregistered from this event");
+      } else if (event.requireApproval) {
+        toast.success("Request sent to organizer");
+      } else if (event.ticketType === "paid") {
+        toast.success("Registration confirmed");
+      } else {
+        toast.success("You're in! See you there 🎉");
+      }
+    } catch (error) {
+      console.error("Registration error:", error);
+      toast.error(error?.message || "Failed to update registration");
+    }
   };
 
   if (loading) return <CenteredSpinner />;
@@ -521,20 +572,19 @@ export default function EventReadPage({eventId}) {
               />
             </div>
 
-            {/* CTA card */}
             <CTACard
               event={event}
               isOrganizer={isOrganizer}
               onPublish={handlePublish}
               onCancel={handleCancel}
-              onEdit={() =>
-                navigate(`/main/create-form`, { state: { event } })
-              }
+              onEdit={() => navigate(`/main/create-form`, { state: { event } })}
               onCoHost={() => setCoHostOpen(true)}
               publishing={publishing}
               cancelling={statusLoading}
+              onRegister={handleRegister}
+              isRegistered={isRegistered}
+              registering={isToggling}
             />
-
             {/* description */}
             {event.desc && (
               <div className="bg-white rounded-[16px] border border-black/[0.08] p-5">
