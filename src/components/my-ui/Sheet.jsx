@@ -7,6 +7,7 @@ import {
 } from "@/components/ui/dialog";
 import { X } from "lucide-react";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { useState } from "react";
 
 
 const ResponsiveModal = ({ open, onOpenChange, children }) => {
