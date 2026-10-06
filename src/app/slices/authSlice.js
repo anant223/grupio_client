@@ -14,29 +14,40 @@ import {
 } from "@/features/authActions";
 import { createSlice } from "@reduxjs/toolkit";
 
+
+
+const initialErrors = {
+  auth: null,
+  updateProfile: null,
+  changeEmail: null,
+  onboarding: null,
+  fetchHistory: null,
+  preferences: null,
+  notifications: null,
+  location: null,
+};
+
+const initialUserEvents = {
+  subscribed: null,
+  pastOrganizedEvents: null,
+  savedEvents: null,
+  upcomingOrganizeEvents: null,
+};
+
 const initialState = {
   isAuthenticated: false,
   userEvents: {
-    organized: null,
-    attended: null,
+    ...initialUserEvents
   },
   user: null,
-  loading: true,
+  authLoading: false,   
   initialized: false,
-  isUserEventsLoading: false,
+  historyLoading: false,
   preferencesLoading: false,
   notificationLoading: false,
-  errors: {
-    auth: null,
-    updateProfile: null,
-    changeEmail: null,
-    onboarding: null,
-    fetchHistory: null,
-    preferences: null,
-    notifications: null,
-    location: null,
-  },
+  errors: { ...initialErrors },
 };
+
 
 const authSlice = createSlice({
   name: "auth",
@@ -48,17 +59,10 @@ const authSlice = createSlice({
     clearUser: (state) => {
       state.user = null;
       state.isAuthenticated = false;
-      state.userEvents = { organized: null, attended: null };
-      state.errors = {
-        auth: null,
-        updateProfile: null,
-        changeEmail: null,
-        onboarding: null,
-        fetchHistory: null,
-        preferences: null,
-        notifications: null,
+      state.userEvents = {
+        ...initialUserEvents
       };
-      
+      state.errors = { ...initialErrors };
     },
     localNotificationPreferances: (state, action) => {
       const { key, value } = action.payload;
@@ -68,60 +72,54 @@ const authSlice = createSlice({
   extraReducers: (builder) => {
     builder
       .addCase(signup.pending, (state) => {
-        state.loading = true;
+        state.authLoading = true;
         state.errors.auth = null;
       })
       .addCase(signup.fulfilled, (state) => {
-        state.loading = false;
+        state.authLoading = false;
       })
       .addCase(signup.rejected, (state, action) => {
-        state.loading = false;
+        state.authLoading = false;
         state.errors.auth = action.payload;
       })
       .addCase(login.pending, (state) => {
-        state.loading = true;
+        state.authLoading = true;
         state.errors.auth = null;
         state.isAuthenticated = false;
       })
       .addCase(login.fulfilled, (state, action) => {
-        state.loading = false;
+        state.authLoading = false;
         state.user = action.payload.user;
         state.isAuthenticated = true;
-        state.initialized = true;
       })
       .addCase(login.rejected, (state, action) => {
-        state.loading = false;
+        state.authLoading = false;
         state.isAuthenticated = false;
-        state.initialized = true;
         if (action.payload?.status !== 401) {
           state.errors.auth = action.payload;
         }
       })
       .addCase(logout.pending, (state) => {
-        state.loading = true;
+        state.authLoading = true;
       })
       .addCase(logout.fulfilled, (state) => {
-        state.loading = false;
+        state.authLoading = false;
         state.user = null;
         state.isAuthenticated = false;
-        state.userEvents = { organized: null, attended: null };
-        state.initialized = true;
+        state.userEvents = {...initialUserEvents};
       })
       .addCase(logout.rejected, (state) => {
-        state.loading = false;
+        state.authLoading = false;
       })
       .addCase(fetchCurrentUser.pending, (state) => {
-        state.loading = true;
         state.errors.auth = null;
       })
       .addCase(fetchCurrentUser.fulfilled, (state, action) => {
-        state.loading = false;
         state.user = action.payload;
         state.isAuthenticated = true;
         state.initialized = true;
       })
       .addCase(fetchCurrentUser.rejected, (state, action) => {
-        state.loading = false;
         state.isAuthenticated = false;
         state.initialized = true;
         if (action.payload?.status !== 401) {
@@ -134,6 +132,7 @@ const authSlice = createSlice({
       .addCase(updateProfile.fulfilled, (state, action) => {
         const { name, bio, avatar } = action.payload;
         if (!state.user) return;
+
         if (name) state.user.name = name;
         if (bio) state.user.bio = bio;
         if (avatar) state.user.avatar = avatar;
@@ -143,18 +142,17 @@ const authSlice = createSlice({
         state.errors.updateProfile = action.payload;
       })
       .addCase(fetchHistory.pending, (state) => {
-        state.isUserEventsLoading = true;
+        state.historyLoading = true;
       })
       .addCase(fetchHistory.fulfilled, (state, action) => {
-        state.userEvents.organized = action.payload.history.organizedEvent;
-        state.userEvents.attended = action.payload.history.attendedEvent;
-        state.isUserEventsLoading = false;
+        const { organized } = action.payload.history;
+        state.userEvents.pastOrganizedEvents = organized;
+        state.historyLoading = false;
         state.errors.fetchHistory = null;
       })
       .addCase(fetchHistory.rejected, (state, action) => {
-        state.userEvents.attended = null;
-        state.userEvents.organized = null;
-        state.isUserEventsLoading = false;
+        state.userEvents.pastOrganizedEvents = null;
+        state.historyLoading = false;
         state.errors.fetchHistory = action.payload;
       })
       .addCase(onboardingComplete.pending, (state) => {
@@ -259,9 +257,6 @@ const authSlice = createSlice({
   },
 });
 
-
-export const { clearError, clearUser, localNotificationPreferances} = authSlice.actions;
+export const { clearError, clearUser, localNotificationPreferances } = authSlice.actions;
 export default authSlice.reducer;
-
-
 
