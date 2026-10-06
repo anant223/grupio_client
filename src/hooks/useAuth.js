@@ -11,7 +11,10 @@ import {
   selectNotificationsError,
   selectAuthInitialized,
   selectUser,
-  selectUserEvents,
+  selectUserHistory,
+  selectNotificationLoading,
+  selectPreferencesLoading,
+  selectHistoryLoading
 } from "@/app/selector/authSelector";
 import {localNotificationPreferances} from "@/app/slices/authSlice"
 import {
@@ -36,10 +39,13 @@ import {
 export const useAuth = () => {
   const dispatch = useDispatch();
   const isAuthenticated = useSelector(selectIsAuthenticated);
-  const loading = useSelector(selectAuthLoading);
+  const authLoading = useSelector(selectAuthLoading);
   const initialized = useSelector(selectAuthInitialized);
   const user = useSelector(selectUser);
-  const userHistory = useSelector(selectUserEvents);
+  const userEvents = useSelector(selectUserHistory);
+
+  const preferencesLoading = useSelector(selectPreferencesLoading);
+  const notificationLoading = useSelector(selectNotificationLoading);
 
   const authError = useSelector(selectAuthError);
   const updateProfileError = useSelector(selectUpdateProfileError);
@@ -156,7 +162,7 @@ export const useAuth = () => {
     changePassword,
     onboardingCompletion,
     updateUserCategory,
-    loading,
+    authLoading,
     initialized,
     isAuthenticated,
     refetchCurrUser,
@@ -165,7 +171,7 @@ export const useAuth = () => {
     createSession,
     user,
     settingUserNotificationPreferences,
-    userHistory,
+    userEvents,
     logout: () => dispatch(logout()).unwrap(),
     updateNewEmail,
     confirmEmailUpdate,
@@ -177,7 +183,9 @@ export const useAuth = () => {
     preferencesError,
     notificationsError,
     forgetOldPassword,
-    createNewPassword
+    createNewPassword,
+    preferencesLoading,
+    notificationLoading,
   };
 };
 
