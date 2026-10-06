@@ -536,6 +536,11 @@ const EventFormPage = () => {
     }
   };
 
+  const toDatetimeLocalString = (date) => {
+    const d = new Date(date)
+    const pad = (n) => String(n).padStart(2, "0");
+    return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
+  }
   return (
     <div>
       <form onSubmit={handleSubmit(onSubmit)}>
@@ -740,12 +745,14 @@ const EventFormPage = () => {
                       "Venue location is required",
                   }}
                   render={({ field }) => {
-                    console.log(field)
-                    return <LocationInput
-                      value={field.value}
-                      onChange={field.onChange}
-                    />
-                   }}
+                    console.log(field);
+                    return (
+                      <LocationInput
+                        value={field.value}
+                        onChange={field.onChange}
+                      />
+                    );
+                  }}
                 />
                 <FieldError message={errors.location?.message} />
               </div>
@@ -806,7 +813,11 @@ const EventFormPage = () => {
                     },
                   }}
                   render={({ field }) => (
-                    <TextInput type="datetime-local" {...field} />
+                    <TextInput
+                      type="datetime-local"
+                      value={field.value ? toDatetimeLocalString(field.value) : ""}
+                      {...field}
+                    />
                   )}
                 />
                 <FieldError message={errors.startDateTime?.message} />
@@ -1077,7 +1088,11 @@ const EventFormPage = () => {
                   </svg>
                   {event ? "Updating…" : "Creating…"}
                 </>
-              ) : event ? "Update" : "Create event"}
+              ) : event ? (
+                "Update"
+              ) : (
+                "Create event"
+              )}
             </button>
 
             <p className="text-[11.5px] text-[#9a9590] text-center mt-3">
