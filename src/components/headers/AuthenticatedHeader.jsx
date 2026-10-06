@@ -187,7 +187,7 @@ const UserMenu = ({ user }) => {
     const quickActions = [
         { label: "Profile", color: "#378ADD", bg: "rgba(55,138,221,0.1)", icon: <User size={13} color="#378ADD" />, path: `/main/user-profile/${user?._id}` },
         { label: "Saved", color: "#BA7517", bg: "rgba(186,117,23,0.1)", icon: <Bookmark size={13} color="#BA7517" />, path: "/main" },
-        { label: "Settings", color: "#5F5E5A", bg: "rgba(95,94,90,0.1)", icon: <Settings size={13} color="#5F5E5A" />, path: "/main" },
+        { label: "Settings", color: "#5F5E5A", bg: "rgba(95,94,90,0.1)", icon: <Settings size={13} color="#5F5E5A" />, path: "/main/settings" },
     ];
 
     return (
@@ -327,7 +327,7 @@ const MobileMenu = ({ open, onClose, user }) => {
         { label: "Notifications", icon: <Bell size={16} />, path: "/main" },
         { label: "Bookmarks", icon: <Bookmark size={16} />, path: "/main" },
         { label: "Profile", icon: <User size={16} />, path: `/main/user-profile/${user?._id}` },
-        { label: "Settings", icon: <Settings size={16} />, path: "/main" },
+        { label: "Settings", icon: <Settings size={16} />, path: "/main/settings" },
     ];
 
     return (
@@ -445,50 +445,49 @@ export default function AuthenticatedHeader() {
    return (
      <>
        <motion.header
-         key="split"
-         initial={{ opacity: 0, y: -8 }}
-         animate={{ opacity: 1, y: 0 }}
-         transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
-         className="relative flex-shrink-0 top-0 z-50 bg-[#f0ede6]/90 backdrop-blur-sm border-b border-black/[0.06] h-14 sm:h-[60px]"
-         style={{ paddingTop: "env(safe-area-inset-top)" }}
+        key="split"
+        initial={{ opacity: 0, y: -8 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
+        className="relative flex-shrink-0 top-0 z-50 bg-[#f0ede6]/90 backdrop-blur-sm border-b border-black/[0.06] h-14 sm:h-[60px]"
+        style={{ paddingTop: "env(safe-area-inset-top)" }}
        >
-         <div className=" container mx-auto h-full px-2 sm:px-4">
-           <div className="flex items-center justify-between h-full">
-             <Link
-               to="/main/all-events"
-               aria-label="Grupio home"
-               className="flex items-center gap-2 no-underline shrink-0 rounded-md focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#E24B4A]"
-             >
-               <Logo className="h-6 sm:h-7 w-auto" />
-             </Link>
+        <div className=" container mx-auto h-full px-2 sm:px-4">
+            <div className="flex items-center justify-between h-full">
+                <Link
+                    to="/main/all-events"
+                    aria-label="Grupio home"
+                    className="flex items-center gap-2 no-underline shrink-0 rounded-md focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#E24B4A]"
+                >
+                    <Logo className="h-6 sm:h-7 w-auto" />
+                </Link>
 
-             {/* Controls */}
-             <div className="flex items-center gap-1.5 sm:gap-3">
-               <div className="hidden md:block">
-                 <UserMenu user={user} />
-               </div>
+                <div className="flex items-center gap-1.5 sm:gap-3">
+                    <div className="hidden md:block">
+                        <UserMenu user={user} />
+                    </div>
 
-               <motion.button
-                 whileHover={{ scale: 1.04 }}
-                 whileTap={{ scale: 0.96 }}
-                 onClick={() => navigate("/main/create-form")}
-                 aria-label="Create event"
-                 className="hidden md:flex items-center justify-center w-[38px] h-[38px] rounded-full bg-[#E24B4A] hover:bg-[#d03f3e] active:bg-[#b8352f] transition-colors cursor-pointer flex-shrink-0 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#E24B4A]"
-               >
-                 <Plus size={15} className="text-white" strokeWidth={2.5} />
-               </motion.button>
+                    <motion.button
+                        whileHover={{ scale: 1.04 }}
+                        whileTap={{ scale: 0.96 }}
+                        onClick={() => navigate("/main/create-form")}
+                        aria-label="Create event"
+                        className="hidden md:flex items-center justify-center w-[38px] h-[38px] rounded-full bg-[#E24B4A] hover:bg-[#d03f3e] active:bg-[#b8352f] transition-colors cursor-pointer flex-shrink-0 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#E24B4A]"
+                    >
+                        <Plus size={15} className="text-white" strokeWidth={2.5} />
+                    </motion.button>
 
-               <motion.button
-                 type="button"
-                 whileTap={{ scale: 0.94 }}
-                 aria-label="Open menu"
-                 aria-expanded={mobileOpen}
-                 className="md:hidden flex items-center justify-center w-9 h-9 rounded-full bg-gray-100 hover:bg-gray-200 active:bg-gray-300 border border-black/10 transition-colors cursor-pointer flex-shrink-0"
-                 onClick={() => setMobileOpen(true)}
-               >
-                 <Menu size={15} className="text-[#3d3a34]" />
-               </motion.button>
-             </div>
+                    <motion.button
+                        type="button"
+                        whileTap={{ scale: 0.94 }}
+                        aria-label="Open menu"
+                        aria-expanded={mobileOpen}
+                        className="md:hidden flex items-center justify-center w-9 h-9 rounded-full bg-gray-100 hover:bg-gray-200 active:bg-gray-300 border border-black/10 transition-colors cursor-pointer flex-shrink-0"
+                        onClick={() => setMobileOpen(true)}
+                    >
+                        <Menu size={15} className="text-[#3d3a34]" />
+                    </motion.button>
+                </div>
            </div>
          </div>
        </motion.header>
