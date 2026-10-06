@@ -22,7 +22,7 @@ export const useEnroll = (eventId) => {
   const toggleLoading = useSelector(selectToggleLoading);
   const loading = useSelector(selectRegistrationLoading);
 
-
+  
   useEffect(() => {
     if (registeredEvents.length === 0 && !loading) {
       dispatch(fetchRegisteredEvents());
