@@ -108,6 +108,7 @@ export const fetchHistory = createAsyncThunk(
   async (_, { rejectWithValue }) => {
     try {
       const response = await userService.readHistory();
+      console.log(response)
       return response.data;
     } catch (error) {
       return rejectWithValue(error.response?.data || "Failed to fetch history");
