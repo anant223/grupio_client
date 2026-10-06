@@ -7,7 +7,7 @@ import useSocialAuth from "@/hooks/useSocialAuth";
 
 
 const AuthPage = () => {
-  const { createSession, createAccount, loading } = useAuth();
+  const { createSession, createAccount, authLoading } = useAuth();
   const {handleSocialAuth, isLoading} = useSocialAuth()
   const navigate = useNavigate();
   const [URLSearchParams] = useSearchParams();
@@ -137,7 +137,7 @@ const AuthPage = () => {
                   onLogin={handleSocialAuth}
                   onPasskeyLogin={handlePasskeyLogin}
                   onSubmit={handleLoginSubmit}
-                  loading={loading}
+                  loading={authLoading}
                   socialLoading={isLoading}
                 />
               ) : (
@@ -145,7 +145,7 @@ const AuthPage = () => {
                   onSignup={handleSocialAuth}
                   onPasskeyLogin={handlePasskeyLogin}
                   onSubmit={handleSignupSubmit}
-                  loading={loading}
+                  loading={authLoading}
                   socialLoading={isLoading}
                 />
               )}
