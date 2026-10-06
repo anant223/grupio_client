@@ -3,14 +3,43 @@ import { createSelector } from "@reduxjs/toolkit";
 export const selectUser = (state) => state.auth.user;
 export const selectIsAuthenticated = (state) => state.auth.isAuthenticated;
 export const selectAuthInitialized = (state) => state.auth.initialized;
+export const selectUserHistory = (state) => state.auth.userEvents
 
-export const selectAuthLoading = (state) => state.auth.loading;
-export const selectIsUserEventsLoading = (state) =>
-  state.auth.isUserEventsLoading;
+export const selectUpcomingOrganized = createSelector(
+  (state) => state.auth.userEvents.upcomingOrganizeEvents,
+  (organized) =>
+    organized?.filter((e) => new Date(e.startDateTime) >= new Date()) ?? null
+);
+export const selectPastOrganized = createSelector(
+  (state) => state.auth.userEvents.pastOrganized,
+  (organized) =>
+    organized?.filter((e) => new Date(e.startDateTime) < new Date()) ?? null
+);
+export const selectPastSubs = createSelector(
+  (state) => state.auth.userEvents.subscribed,
+  (subscribed) =>
+    subscribed?.filter((e) => new Date(e.event.startDateTime) < new Date()) ??
+    null
+);
+export const selectUpcomingSubs = createSelector(
+  (state) => state.auth.userEvents.subscribed,
+  (subscribed) =>
+    subscribed?.filter((e) => new Date(e.event.startDateTime) >= new Date()) ??
+    null
+);
+export const selectIsSubscribed = (eventId) =>
+  createSelector(
+    (state) => state.auth.userEvents.subscribed,
+    (subscribed) =>
+      subscribed?.some((sub) => sub.event._id === eventId) ?? false
+  );
+export const selectAuthLoading = (state) => state.auth.authLoading;
+
 export const selectPreferencesLoading = (state) =>
   state.auth.preferencesLoading;
 export const selectNotificationLoading = (state) =>
   state.auth.notificationLoading;
+export const selectHistoryLoading = (state) => state.auth.historyLoading;
 
 export const selectAuthError = (state) => state.auth.errors.auth;
 export const selectUpdateProfileError = (state) =>
@@ -61,28 +90,6 @@ export const selectUserNotificationPreferences = createSelector(
 export const selectOnboardingCompleted = createSelector(
   [selectUser],
   (user) => user?.onboardingCompleted || false
-);
-
-export const selectUserEvents = (state) => state.auth.userEvents;
-
-export const selectOrganizedEvents = createSelector(
-  [selectUserEvents],
-  (userEvents) => userEvents?.organized || []
-);
-
-export const selectAttendedEvents = createSelector(
-  [selectUserEvents],
-  (userEvents) => userEvents?.attended || []
-);
-
-export const selectOrganizedEventsCount = createSelector(
-  [selectOrganizedEvents],
-  (events) => events?.length || 0
-);
-
-export const selectAttendedEventsCount = createSelector(
-  [selectAttendedEvents],
-  (events) => events?.length || 0
 );
 
 export const selectHasCompletedProfile = createSelector(
