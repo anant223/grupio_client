@@ -31,6 +31,7 @@ const registrationSlice = createSlice({
       })
       .addCase(toggleEventRegistration.fulfilled, (state, action) => {
         state.toggleLoading = false;
+        console.log("payload", action.payload);
         
         const { eventId, isRegistered, event } = action.payload;
         
