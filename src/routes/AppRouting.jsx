@@ -8,7 +8,7 @@ const AuthLayout = lazy(() => import("@/Layouts/AuthLayout"));
 
 const Home = lazy(() => import( "@/pages/Home"));
 const Auth = lazy(() => import("@/pages/Auth"));
-// const Profile = lazy(() => import("../pages/Profile"));
+const Profile = lazy(() => import("../pages/Profile"));
 const EventFrom = lazy(() => import("../pages/EventFrom"));
 const Events = lazy(() => import("../pages/Events"));
 const EventDetail = lazy(() => import("../pages/EventDetail"));
@@ -80,10 +80,10 @@ const AppRouting = createBrowserRouter([
       //   path: "notifications",
       //   element: <Notification />,
       // },
-      // {
-      //   path: "user-profile/:id",
-      //   element: <Profile />,
-      // },
+      {
+        path: "user-profile/:id",
+        element: <Profile />,
+      },
       {
         path: "create-form",
         element: <EventFrom />,
