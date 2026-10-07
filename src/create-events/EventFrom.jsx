@@ -151,7 +151,7 @@ const LocationInput = ({ value, onChange }) => {
           <path d="M8 2C5.2 2 3 4.2 3 7c0 3.5 5 8 5 8s5-4.5 5-8c0-2.8-2.2-5-5-5z" />
           <circle cx="8" cy="7" r="1.5" />
         </svg>
-        <PanelInput
+        <Input
           value={query}
           onChange={handleChange}
           onFocus={() => setOpen(true)}
