@@ -22,6 +22,7 @@ export const fetchRegisteredEvents = createAsyncThunk(
   async (_, { rejectWithValue }) => {
     try {
       const response = await registerService.registredEvents();
+      console.log(response)
       return response.data;
     } catch (error) {
       return rejectWithValue(
