@@ -1,3 +1,4 @@
+
 import { combineReducers } from "@reduxjs/toolkit";
 import authReducer from "@/app/slices/authSlice.js";
 import eventsReducer from "@/app/slices/eventsSlice.js";
@@ -7,6 +8,7 @@ import registrationReducer from "@/app/slices/registerSlice";
 import categoryReducer from "@/app/slices/categorySlice";
 import paymentReducer from "@/app/slices/paymentSlice";
 import waitlistReducer from "@/app/slices/waitlistSlice";
+
 
 
 const rootReducer = combineReducers({
