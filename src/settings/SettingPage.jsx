@@ -10,6 +10,8 @@ import { Card } from "@/components/ui/card.jsx";
 import LocationSheet from "./sheets/LocationSheet.jsx";
 import { toast } from "sonner";
 import { MoveLeft } from "lucide-react";
+import LocationInput from "@/components/common/LocationInput.jsx";
+import { clearRegisteredEvents } from "@/app/slices/registerSlice.js";
 // import icons from "@/utils/icons.js";
 
 
@@ -530,6 +532,7 @@ const SettingPage = () => {
     useCategory();
 
 
+
   const openSheet = (name) => setActiveSheet(name);
   const closeSheet = () => setActiveSheet(null);
 
@@ -576,7 +579,7 @@ const SettingPage = () => {
 
   return (
     <>
-      <div className="max-w-xl mx-auto px-4 pt-6 pb-20">
+      <div className="max-w-3xl mx-auto px-4 pt-6 pb-20">
         <button
           onClick={() => navigate(-1)}
           className="flex items-center gap-1.5 text-[13px] text-[#9b9890] bg-transparent border-none cursor-pointer p-0 mb-6"
@@ -677,9 +680,9 @@ const SettingPage = () => {
               color: "#0F6E56",
             },
             {
-              key: "eventCancelled",
-              label: "Event cancelled",
-              sub: "Events you joined are cancelled",
+              key: "notification",
+              label: "Notification",
+              sub: "Other notifcation",
               icon: icons.cancelled,
               bg: "#FCEBEB",
               color: "#A32D2D",
@@ -717,7 +720,7 @@ const SettingPage = () => {
                 {isCategoryLoading ? (
                   <span className="text-xs text-[#9b9890]">Loading...</span>
                 ) : (
-                  categories?.categories?.map((cat) => (
+                  categories?.map((cat) => (
                     <Chip
                       key={cat._id}
                       label={cat.name}
@@ -856,10 +859,7 @@ const SettingPage = () => {
         open={activeSheet === SHEET.EDIT}
         onClose={closeSheet}
       />
-      <EmailSheet
-        open={activeSheet === SHEET.EMAIL}
-        onClose={closeSheet}
-      />
+      <EmailSheet open={activeSheet === SHEET.EMAIL} onClose={closeSheet} />
       <LocationSheet
         open={activeSheet === SHEET.LOCATION}
         onClose={closeSheet}
@@ -869,10 +869,7 @@ const SettingPage = () => {
         onClose={closeSheet}
       />
 
-      <StripeSheet
-        open={activeSheet === SHEET.STRIPE}
-        onClose={closeSheet}
-      />
+      <StripeSheet open={activeSheet === SHEET.STRIPE} onClose={closeSheet} />
 
       <DeleteAccountSheet
         open={activeSheet === SHEET.DELETE}
