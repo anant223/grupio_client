@@ -17,7 +17,6 @@ import CenteredSpinner from "@/components/common/LoadingSpinner";
 import ResponsiveModal from "@/components/my-ui/Sheet";
 import { toast } from "sonner";
 import useEnroll from "@/hooks/useEnroll";
-import useHistory from "@/hooks/useHistory";
 
 // ─── Helpers ───────────────────────────────────────────────────────────────────
 function formatDate(dt) {
