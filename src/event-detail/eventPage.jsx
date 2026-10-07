@@ -17,6 +17,7 @@ import CenteredSpinner from "@/components/common/LoadingSpinner";
 import ResponsiveModal from "@/components/my-ui/Sheet";
 import { toast } from "sonner";
 import useEnroll from "@/hooks/useEnroll";
+import useHistory from "@/hooks/useHistory";
 
 // ─── Helpers ───────────────────────────────────────────────────────────────────
 function formatDate(dt) {
@@ -121,6 +122,7 @@ function CTACard({
   const isCompleted = event.status === "completed";
   const isPaid = event.ticketType === "paid";
   const isFull = event.availableTickets === 0;
+  
 
 
   return (
@@ -212,28 +214,6 @@ function CTACard({
                   type="button"
                   onClick={onRegister}
                   disabled={registering || isFull || isRegistered}
-                  className="..."
-                >
-                  {registering ? (
-                    <>
-                      <Spinner /> Processing…
-                    </>
-                  ) : isFull ? (
-                    "Event full"
-                  ) : isRegistered ? (
-                    "Already registered"
-                  ) : isPaid ? (
-                    `Buy ticket · ${event.currency} ${event.price}`
-                  ) : event.requireApproval ? (
-                    "Request to join"
-                  ) : (
-                    "Join event"
-                  )}
-                </button>
-                <button
-                  type="button"
-                  onClick={onRegister}
-                  // disabled={registering || isFull || isRegistered}
                   className="w-full h-11 rounded-xl bg-[#1a1814] text-white text-[13.5px] font-bold hover:bg-[#272420] active:scale-[0.99] transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                 >
                   {registering ? (
@@ -323,9 +303,11 @@ function CoHostModal({ open, onOpenChange, eventId, onAdded }) {
 export default function EventReadPage({eventId}) {
   const navigate = useNavigate();
   const { user } = useAuth();
-  const { isRegistered, isToggling, toggleRegistration } = useEnroll(eventId);
+  const { isRegistered, isToggling, toggleRegistration, registeredEvents } = useEnroll(eventId);
   const { getEventById, currentEvent, cancel, publishEvent, loading, createLoading: publishing, statusLoading } = useEvents();
   const [coHostOpen, setCoHostOpen] = useState(false);
+
+  // console.log("reg", registeredEvents)
 
   useEffect(() => {
     const fetchEvent = async () => {
