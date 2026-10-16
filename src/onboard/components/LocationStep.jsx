@@ -2,36 +2,45 @@ import { Field } from "@/auth/components/Components";
 import useLocationSearch from "@/hooks/useLocation";
 import { AnimatePresence,motion } from "framer-motion";
 import { AlertCircle, MapPin } from "lucide-react";
-import {useCallback, useState } from "react";
+import {useCallback, useEffect, useState } from "react";
 import { useFormContext } from "react-hook-form";
 
-const LocationStep = () => {
+
+const LocationStep = ({value, onChange}) => {
+  const [query, setQuery] = useState(value?.address ?? "");
   const [open, setOpen] = useState(false);
   const [isSelcted, setIsSelected] = useState(false);
-  const {register, watch, formState:{errors}, setValue} = useFormContext()
+  const {register, watch, formState:{errors}, setValue,} = useFormContext()
   const locationQuery = watch("locationQuery");
   const { recommendations, isLoading, err, lastQueryRef } = useLocationSearch({
-    locationQuery: isSelcted ? null : locationQuery,
+    locationQuery: isSelcted ? null : value?.address,
   });
+
+  useEffect(()=> {
+    setValue(value?.address)
+  }, [value.address])
  
   
-  const pick = (recommend) => {
-    lastQueryRef.current = ""
-    setIsSelected(true)
-    setValue("locationQuery", `${recommend?.city}, ${recommend?.country}`);;
-    setValue(
-      "location",
-      {
-        city: recommend?.city,
-        country: recommend?.country,
-        coordinates: recommend?.coordinates,
-        formattedAddress: recommend?.formattedAddress,
-        placeId: recommend?.placeId, 
-        type: "Point",
-      },
-      { shouldValidate: true }
-    );
-    setOpen(false)
+  const select = (f) => {
+    const coordinates = f.geometry.coordinates;
+
+    const getContext = (prefix) =>
+      f.context?.find((c) => c.id.startsWith(prefix));
+      onChange({
+       coordinates,
+       address: f.place_name,
+       placeId: f.id,
+       city: getContext("place")?.text ?? null,
+       state: getContext("region")?.text ?? null,
+       country: getContext("country")?.text ?? null,
+       countryCode: getContext("country")?.short_code?.toUpperCase() ?? null,
+       postalCode: f.place_type?.includes("postcode")
+         ? f.text
+         : (getContext("postcode")?.text ?? null),
+     });
+
+    setQuery(f.place_name);
+    setOpen(false);
   };
 
   const handleKeyDown= (e) => {
@@ -89,17 +98,22 @@ const LocationStep = () => {
             className="absolute z-50 w-full mt-1 bg-white border border-stone-200/80 rounded-2xl shadow-[0_10px_30px_rgba(0,0,0,0.08)] max-h-60 overflow-y-auto p-2 space-y-0.5"
             style={{ top: "100%" }}
           >
-            {recommendations.map((recommend, index) => (
+            {recommendations?.map((recommend) => (
               <button
-                key={`${recommend.city}-${recommend.country}`}
+                key={recommend?.id}
                 type="button"
-                onClick={() => pick(recommend)}
+                onClick={() => select(recommend)}
                 onKeyDown={handleKeyDown}
                 className="w-full text-left px-4 py-2.5 text-sm font-medium text-stone-700 hover:bg-[#F9F8F6] hover:text-[#121212] rounded-xl transition-colors flex items-center gap-3 group"
               >
                 <MapPin className="w-4 h-4 text-stone-400 group-hover:text-[#DE5239] transition-colors flex-shrink-0" />
-                <span className="truncate">
-                  {recommend.city}, {recommend.region}, {recommend.country}
+                <span className="flex flex-col min-w-0">
+                  <span className="text-[13px] font-medium text-[#1a1814] truncate">
+                    {recommend?.text}
+                  </span>
+                  <span className="text-[11px] text-[#9b9890] truncate">
+                    {recommend?.place_name}
+                  </span>
                 </span>
               </button>
             ))}
