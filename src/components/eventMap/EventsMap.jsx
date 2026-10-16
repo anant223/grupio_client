@@ -537,7 +537,8 @@ const GeoMap = memo(
     const [showList, setShowList] = useState(false);
     const [markerEvents, setMarkerEvents] = useState(null);
 
-    const coordinates = location?.coordinates;
+
+    const coordinates = location?.coordinates?.coordinates;
 
     const [currentCenter, setCurrentCenter] = useState({
       lat: coordinates?.[1] || null,
@@ -564,7 +565,7 @@ const GeoMap = memo(
       setMarkerEvents(groupEvents);
       setShowList(true);
     };
-    console.log("Events", events);
+    // console.log("Events", events);
     useEventsMarkers({
       events,
       mapRef,
