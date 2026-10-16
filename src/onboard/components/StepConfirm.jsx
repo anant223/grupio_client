@@ -1,4 +1,3 @@
-// steps/StepConfirm.jsx
 import { MapPin } from "lucide-react";
 import { useFormContext } from "react-hook-form";
 
@@ -25,7 +24,7 @@ const StepConfirm = () => {
           </span>
           <span className="text-[13.5px] font-semibold text-[#1a1814] flex items-center">
             <MapPin className=" text-[#D85A30] w-3.4 h-3.5" />
-            {location?.city}, {location?.country}
+            {location?.address}
           </span>
         </div>
 
