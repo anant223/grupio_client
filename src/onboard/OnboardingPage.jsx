@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { FormProvider, useForm } from 'react-hook-form';
+import { Controller, FormProvider, useForm } from 'react-hook-form';
 import { motion, AnimatePresence } from "framer-motion";
 
 import useAuth from "@/hooks/useAuth";
@@ -8,7 +8,7 @@ import useAuth from "@/hooks/useAuth";
 import OnboardingSuccess from "@/onboard/OnboardingSuccess";
 import Preferences from "@/onboard/components/Preferences";
 import StepConfirm from "@/onboard/components/StepConfirm";
-import LocationStep from '@/onboard/components/LocationStep';
+import LocationInput from '@/components/common/LocationInput';
 
 const TOTAL_STEPS = 3;
 
@@ -148,14 +148,28 @@ function NavRow({ step, onBack, onNext, onSubmit, isSubmitting, canSubmit }) {
   );
 }
 
-const OnboardingPage = () => {
-  const {onboardingCompletion, onboardingError: error} = useAuth();
-  const [step, setStep] = useState(1);
-  const [done, setDone] = useState(false)
-  const [isSubmitting, setIsSubmitting] = useState(false);
+import { useNavigate } from "react-router-dom";
 
-  const methods = useForm({mode: "onTouched"});
-  const {watch, getValues, formState:{errors}, trigger} = methods
+const OnboardingPage = () => {
+  const navigate = useNavigate();
+  const { onboardingCompletion, onboardingError } = useAuth();
+
+  const [step, setStep] = useState(1);
+  const [done, setDone] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [localError, setLocalError] = useState("");
+
+  const methods = useForm({ mode: "onTouched" });
+  const { watch, trigger, control } = methods;
+
+  const [preferredCategories, interests] = watch([
+    "preferredCategories",
+    "interests",
+  ]);
+  const totalCount =
+    (preferredCategories?.length ?? 0) + (interests?.length ?? 0);
+
+  const error = localError || onboardingError;
 
   const goNext = async () => {
     const isValid = await trigger(
@@ -166,41 +180,36 @@ const OnboardingPage = () => {
           : []
     );
     if (!isValid) return;
+    setLocalError("");
     setStep((prev) => (prev < TOTAL_STEPS ? prev + 1 : prev));
   };
 
   const goBack = () => {
+    setLocalError("");
     setStep((prev) => (prev > 1 ? prev - 1 : prev));
   };
- 
-  const handleSubmit = async () => {
-    const { location, preferredCategories, interests } = getValues();
-    if (!location) return setError("Location is required.");
-    if (totalCount < 2) return setError("At least 2 preferences are required.");
-    if (totalCount > 5) return setError("Maximum 5 preferences allowed.");
-    setIsSubmitting(true)
+
+  const onSubmit = async (data) => {
+    console.log("onboarding data:", data);
+
+    if (totalCount < 2) return setLocalError("At least 2 preferences are required.");
+    if (totalCount > 5) return setLocalError("Maximum 5 preferences allowed.");
+
+    setLocalError("");
+    setIsSubmitting(true);
     try {
-      await onboardingCompletion({
-        location: {
-          city: location.city,
-          country: location.country,
-          coordinates: location.coordinates,
-        },
-        preferredCategories,
-        interests,
-      });
-      setDone(true)
-    } catch (error) {
-      throw new Error("Error message: ", error.message)
+      await onboardingCompletion(data);
+      setDone(true);
+    } catch (err) {
+      console.error(err);
+      setLocalError(err?.message || "Something went wrong. Try again.");
     } finally {
-      setIsSubmitting(false)
+      setIsSubmitting(false);
     }
-  }
+  };
 
-  const totalCount = (watch("preferredCategories")?.length ?? 0) +
-    (watch("interests")?.length ?? 0);
+  if (done) return <OnboardingSuccess onContinue={() => navigate("/home")} />;
 
-  if (done) return <OnboardingSuccess onContinue={() => navigate("/🎉")} />;
   return (
     <div className="flex justify-center flex-col items-center h-screen">
       <div className="max-w-2xl w-full mx-auto px-4">
@@ -212,6 +221,7 @@ const OnboardingPage = () => {
             Tell us what you're into so we can find the right events for you.
           </p>
         </div>
+
         <motion.div
           className="relative z-[2] w-full max-w-xl mx-auto bg-transparent px-4 sm:bg-white sm:px-7 sm:pt-7 sm:pb-6 sm:rounded-3xl sm:border sm:border-black/[0.08] sm:shadow-[0_2px_24px_rgba(0,0,0,0.05)]"
           initial={{ opacity: 0, y: 16 }}
@@ -220,6 +230,7 @@ const OnboardingPage = () => {
         >
           <FormProvider {...methods}>
             <ProgressBar step={step} />
+
             <AnimatePresence mode="wait">
               <motion.div
                 key={step}
@@ -228,28 +239,45 @@ const OnboardingPage = () => {
                 exit={{ opacity: 0, y: -7 }}
                 transition={{ duration: 0.18 }}
               >
-                {step === 1 && <LocationStep />}
+                {step === 1 && (
+                  <Controller
+                    name="location"
+                    control={control}
+                    rules={{ required: "Select a location from the suggestions" }}
+                    render={({ field, fieldState }) => (
+                      <LocationInput
+                        value={field.value}
+                        onChange={field.onChange}
+                        error={fieldState.error?.message}
+                      />
+                    )}
+                  />
+                )}
                 {step === 2 && <Preferences totalCount={totalCount} />}
                 {step === 3 && <StepConfirm />}
               </motion.div>
             </AnimatePresence>
+
             <ErrorBanner message={error} />
+
             <NavRow
               step={step}
               onBack={goBack}
               onNext={goNext}
-              onSubmit={handleSubmit}
+              onSubmit={methods.handleSubmit(onSubmit)}
               isSubmitting={isSubmitting}
               canSubmit={totalCount >= 2 && totalCount <= 5}
             />
           </FormProvider>
         </motion.div>
+
         <p className="text-[11.5px] text-[#9a9590] text-center mt-5">
           You can update these anytime in profile settings.
         </p>
       </div>
     </div>
   );
-}
+};
 
 export default OnboardingPage;
+
