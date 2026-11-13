@@ -38,13 +38,13 @@ const SignupForm = ({
             onClick={() => onSignup("discord")}
             className="flex-1"
           />
-          <SocialBtn
+          {/* <SocialBtn
             disabled={true}
             icon={PASS_KEY_ICON}
-            label="Passkey"
+            label="G"
             onClick={onPasskeyLogin}
             className="flex-1"
-          />
+          /> */}
         </div>
       </div>
 
