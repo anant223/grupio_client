@@ -6,6 +6,7 @@ import {
 import { Field, SocialBtn, OrDivider } from "@/auth/components/Components";
 import { Link } from "react-router-dom";
 import { useForm } from "react-hook-form";
+import { LockOpen } from "lucide-react";
 
 
 const LoginForm = ({
@@ -42,9 +43,12 @@ const LoginForm = ({
             className="flex-1"
           />
           <SocialBtn
-            disabled={true}
-            icon={PASS_KEY_ICON}
-            label="Passkey"
+            icon={<LockOpen size={14}/>}
+            label={
+              <span className="text-sm font-medium text-gray-600 font-bricolage">
+                Guest
+              </span>
+            }
             onClick={onPasskeyLogin}
             className="flex-1"
           />
