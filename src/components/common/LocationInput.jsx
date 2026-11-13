@@ -59,7 +59,7 @@ const LocationInput = ({ value, onChange }) => {
           onChange={handleChange}
           onFocus={() => setOpen(true)}
           onBlur={() => setTimeout(() => setOpen(false), 150)}
-          placeholder="Search address or 'Online'"
+          placeholder="Location"
           className="pl-9"
         />
         {isLoading && (

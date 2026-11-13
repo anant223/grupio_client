@@ -40,7 +40,7 @@ export default function ProfileInfo({
   socialLinks,
   interests,
   preferred,
-  eventsHosted = 0,
+  eventsHosted,
   isOwnProfile,
   onEditProfile,
   onContactInfo,
