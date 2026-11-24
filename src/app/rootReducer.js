@@ -4,11 +4,11 @@ import authReducer from "@/app/slices/authSlice.js";
 import eventsReducer from "@/app/slices/eventsSlice.js";
 // import likesReducer from "@/app/slices/likeSlice.js";
 import registrationReducer from "@/app/slices/registerSlice";
-// import notificationReducer from "@/app/slices/notificationSlice";
+import notificationReducer from "@/app/slices/notificationSlice";
 import categoryReducer from "@/app/slices/categorySlice";
 import paymentReducer from "@/app/slices/paymentSlice";
 import waitlistReducer from "@/app/slices/waitlistSlice";
-
+import socketReducer from "@/app/slices/socketSlice"
 
 
 const rootReducer = combineReducers({
@@ -16,10 +16,11 @@ const rootReducer = combineReducers({
   event: eventsReducer,
   // likes: likesReducer,
   registration: registrationReducer,
-  // notifications: notificationReducer,
+  notifications: notificationReducer,
   category: categoryReducer,
   payment: paymentReducer,
   waitlist: waitlistReducer,
+  socket: socketReducer
 });
 
 
