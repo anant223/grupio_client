@@ -1,5 +1,6 @@
 import React from "react";
 import {NotificationItem} from "./index"
+import { clearRegisteredEvents } from "@/app/slices/registerSlice";
 
 
 const NotificationList = ({
@@ -30,14 +31,20 @@ const NotificationList = ({
 
   return (
     <div className="space-y-3">
-      {notifications.map((notification) => (
-        <NotificationItem
-          key={notification.id}
-          notification={notification}
-          onMarkRead={onMarkRead}
-          onDismiss={onDismiss}
-        />
-      ))}
+      { 
+        notifications
+        .map(
+          (notification) => {
+            
+            return <NotificationItem
+              key={notification.id}
+              notification={notification}
+              onMarkRead={onMarkRead}
+              onDismiss={onDismiss}
+            />
+          }
+        )
+      }
 
       {/* Load More Button */}
       {hasMorePages && (
