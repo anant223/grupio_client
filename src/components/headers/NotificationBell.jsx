@@ -22,7 +22,6 @@ const NotificationBell = () => {
     markAllAsRead,
   } = useNotifications();
 
-  // ✅ latest 5 for dropdown
   const transformed = useMemo(
     () =>
       notifications.slice(0, 5).map((notif) => transformNotification(notif)),
