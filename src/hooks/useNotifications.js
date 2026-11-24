@@ -33,7 +33,6 @@ const useNotifications = () => {
 
   useEffect(() => {
     if (!user?._id) return;
-
     const handleNewNotification = (notification) => {
       dispatch(addNotification(notification));
     };
