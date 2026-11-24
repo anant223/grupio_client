@@ -463,6 +463,8 @@ export default function AuthenticatedHeader() {
                 </Link>
 
                 <div className="flex items-center gap-1.5 sm:gap-3">
+                    <NotificationBell/>
+                    
                     <div className="hidden md:block">
                         <UserMenu user={user} />
                     </div>
