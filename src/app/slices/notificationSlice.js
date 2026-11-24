@@ -42,7 +42,7 @@ const notificationSlice = createSlice({
         })
         .addCase(fetchNotifications.fulfilled, (state, action) => {
             state.fetchLoading = false;
-            console.log("PAYLOAD:", action.payload);
+            // console.log("PAYLOAD:", action.payload);
             state.notifications = action.payload.allNotifications;
             state.unReadCount = action.payload.unReadCount;
             state.totalCount = action.payload.totalCount;
