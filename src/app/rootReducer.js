@@ -8,7 +8,6 @@ import notificationReducer from "@/app/slices/notificationSlice";
 import categoryReducer from "@/app/slices/categorySlice";
 import paymentReducer from "@/app/slices/paymentSlice";
 import waitlistReducer from "@/app/slices/waitlistSlice";
-import socketReducer from "@/app/slices/socketSlice"
 
 
 const rootReducer = combineReducers({
@@ -20,7 +19,6 @@ const rootReducer = combineReducers({
   category: categoryReducer,
   payment: paymentReducer,
   waitlist: waitlistReducer,
-  socket: socketReducer
 });
 
 
