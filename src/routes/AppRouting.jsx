@@ -15,7 +15,7 @@ const EventDetail = lazy(() => import("../pages/EventDetail"));
 // const Checkout = lazy(() => import("../pages/Checkout"))
 // const PaymentSuccess = lazy(() => import("../pages/paymentSuccess"))
 const OnBoarding = lazy(() => import("@/pages/OnBoarding"));
-// const Notification = lazy(() => import("@/pages/Notification"));
+const Notification = lazy(() => import("@/pages/Notification"));
 const Settings = lazy(() => import("../pages/Settings"));
 // const Verify = lazy(() => import("../pages/Verifying"));
 const ForgetPassword = lazy(() => import("../pages/ForgetPassword"))
@@ -76,10 +76,10 @@ const AppRouting = createBrowserRouter([
         path: "all-events",
         element: <Events />,
       },
-      // {
-      //   path: "notifications",
-      //   element: <Notification />,
-      // },
+      {
+        path: "notifications",
+        element: <Notification />,
+      },
       {
         path: "user-profile/:id",
         element: <Profile />,
